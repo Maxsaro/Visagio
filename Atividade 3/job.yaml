@@ -1,0 +1,37 @@
+resources:
+  jobs:
+    CineData_medalhão:
+      name: CineData_medalhão
+      schedule:
+        quartz_cron_expression: 59 0 8 * * ?
+        timezone_id: America/Sao_Paulo
+        pause_status: UNPAUSED
+      tasks:
+        - task_key: to_Bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/rafaelmassaro@outlook.com/Drafts/Landing_to_Bronze
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          disable_auto_optimization: true
+        - task_key: to_Silver
+          depends_on:
+            - task_key: to_Bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/rafaelmassaro@outlook.com/Drafts/Bronze_to_Silver
+            base_parameters:
+              data_inicio: 10-01-2026
+              data_fim: 10-07-2026
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          disable_auto_optimization: true
+        - task_key: to_Gold
+          depends_on:
+            - task_key: to_Silver
+          notebook_task:
+            notebook_path: /Workspace/Users/rafaelmassaro@outlook.com/Drafts/Silver_to_Gold
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          disable_auto_optimization: true
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
